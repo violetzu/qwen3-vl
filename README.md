@@ -6,7 +6,7 @@ docker build -f docker/Dockerfile -t qwen3vl:latest .
 ```
 ### 2. Run Container
 ```sh
-docker run --gpus all --ipc=host --rm --name qwen3vl -it \
+docker run -d --gpus all --ipc=host --name qwen3vl \
   -v /home/ct/qwen3-vl:/workspace \
   -p 2333:2333 \
   qwen3vl:latest
