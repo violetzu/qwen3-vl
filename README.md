@@ -10,10 +10,11 @@ docker run --gpus all --ipc=host --rm --name qwen3vl -it \
   -p 2333:2333 \
   qwen3vl:latest
 ```
-### 進docker後
+If you need a new shell inside the container
 ```sh
-uvicorn app:app --host 0.0.0.0 --port 2333
+docker exec -it qwen3vl bash
 ```
+
 
 # Client call example
 [client.py](client.py)
