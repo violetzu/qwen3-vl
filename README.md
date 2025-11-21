@@ -8,7 +8,7 @@ docker build -f docker/Dockerfile -t qwen3vl:latest .
 docker run --gpus all --ipc=host --rm --name qwen3vl -it \
   -v /home/ct/qwen3-vl:/workspace \
   -p 2333:2333 \
-  qwen3vl:latest bash
+  qwen3vl:latest
 ```
 ### 進docker後
 ```sh
