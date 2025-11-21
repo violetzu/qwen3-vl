@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from transformers import AutoModelForImageTextToText, AutoProcessor
 
 MODEL_NAME = "Qwen/Qwen3-VL-8B-Instruct"
+MODEL_CACHE_DIR = "/workspace/models"
 
 app = FastAPI(title="Qwen3-VL-8B Vision-Language API")
 
@@ -18,10 +19,10 @@ model = AutoModelForImageTextToText.from_pretrained(
     MODEL_NAME,
     dtype=torch.bfloat16,
     attn_implementation="flash_attention_2",
-    cache_dir="/workspace/models",
+    cache_dir=MODEL_CACHE_DIR,
     device_map="auto",
 )
-processor = AutoProcessor.from_pretrained(MODEL_NAME)
+processor = AutoProcessor.from_pretrained(MODEL_NAME, cache_dir=MODEL_CACHE_DIR)
 print("Model loaded.")
 
 # ---------- 推理函式 ----------
