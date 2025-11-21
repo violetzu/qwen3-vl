@@ -12,6 +12,10 @@ docker run -d --gpus all --ipc=host --name qwen3vl \
   qwen3vl:latest
 ```
 ### 3. (Optional) Enter the Container
+If you want to check log:
+```sh
+docker logs -f -t --tail 200 qwen3vl
+```
 If you need a new shell inside the container:
 ```sh
 docker exec -it qwen3vl bash
