@@ -1,6 +1,7 @@
 # qwen3 server in docker container
 ### build
-```sh 
+```sh
+cd qwen3-vl
 docker build -f docker/Dockerfile -t qwen3vl:latest .
 ```
 ### run
