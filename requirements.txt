@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+accelerate
+timm
+einops
+Pillow
+# 若要 flash-attn，可依需求額外裝，但安裝較麻煩，這裡先略過
+flash-attn
+torch
