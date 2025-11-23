@@ -1,7 +1,6 @@
 fastapi
 uvicorn[standard]
 accelerate
-timm
 einops
 Pillow
 # 若要 flash-attn，可依需求額外裝
