@@ -189,14 +189,19 @@ async def chat_vl(
 # ---------- 全域擋瀏覽器 User-Agent ----------
 @app.middleware("http")
 async def block_browsers(request: Request, call_next):
-    ua = request.headers.get("User-Agent", "")
+    ua = request.headers.get("user-agent", "") or ""
+
     blocked_keywords = ["Mozilla", "Chrome", "Safari", "Firefox", "Edge", "Edg", "Opera"]
 
-    # 只要 UA 裡面有這些字 → 視為瀏覽器 → 403
     if any(k in ua for k in blocked_keywords):
-        raise HTTPException(status_code=403, detail="Browser access is not allowed.")
+        return JSONResponse(
+            status_code=403,
+            content={"detail": "Browser access is not allowed."},
+        )
 
-    return await call_next(request)
+    # 非瀏覽器就照正常流程往下跑
+    response = await call_next(request)
+    return response
 
 @app.get("/")
 def root():
