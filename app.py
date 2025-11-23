@@ -7,6 +7,13 @@ import torch
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request
 from fastapi.responses import JSONResponse
 from transformers import AutoModelForImageTextToText, AutoProcessor
+from dotenv import load_dotenv
+
+# ---------- 載入 .env ----------
+load_dotenv()
+QPIKEY = os.getenv("QPIKEY", None)
+if not QPIKEY:
+    raise RuntimeError(" .env 中沒有設定 QPIKEY")
 
 MODEL_NAME = "Qwen/Qwen3-VL-8B-Instruct"
 MODEL_CACHE_DIR = "/workspace/models"
@@ -57,6 +64,22 @@ def run_qwen_vl(messages, video_path=None, image_path=None, max_new_tokens=256):
     return result
 
 
+# ---------- API Key Middleware：統一在這裡檢查 X-API-Key ----------
+@app.middleware("http")
+async def verify_api_key(request: Request, call_next):
+    # 這邊可以排除某些路徑不用驗證
+    if request.url.path in ["/"]:
+        return await call_next(request)
+
+    client_key = request.headers.get("X-API-Key")
+    if client_key != QPIKEY:
+        return JSONResponse(
+            status_code=401,
+            content={"detail": "Invalid or missing API Key."},
+        )
+
+    return await call_next(request)
+
 
 @app.post("/chat-vl")
 async def chat_vl(
@@ -64,13 +87,11 @@ async def chat_vl(
     messages: str = Form(...),
     max_new_tokens: int = Form(256),
 ):
-    # 讀 messages JSON
     try:
         msgs = json.loads(messages)
     except Exception as e:
         raise HTTPException(400, f"messages JSON 錯誤: {e}")
 
-    # 掃描是否包含 video/image
     need_video = False
     need_image = False
 
@@ -83,7 +104,6 @@ async def chat_vl(
                 if c.get("type") == "image":
                     need_image = True
 
-    # 如果需要 file 但沒附檔 → error
     if (need_video or need_image) and file is None:
         raise HTTPException(400, "messages 指定 video/image，但沒有上傳 file")
 
@@ -92,20 +112,17 @@ async def chat_vl(
     image_path = None
 
     try:
-        # 如果有檔案 → 存到 tmp
         if file:
             ext = os.path.splitext(file.filename)[1].lower() or ".bin"
             with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as tmp:
                 tmp.write(await file.read())
                 temp_path = tmp.name
 
-            # 根據 messages 判斷是 video 還是 image
             if need_video:
                 video_path = temp_path
             if need_image:
                 image_path = temp_path
 
-        # 執行推理
         output = run_qwen_vl(
             msgs,
             video_path=video_path,
@@ -121,18 +138,6 @@ async def chat_vl(
     finally:
         if temp_path and os.path.exists(temp_path):
             os.remove(temp_path)
-
-
-# ---------- 全域擋瀏覽器 User-Agent ----------
-@app.middleware("http")
-async def block_browsers(request: Request, call_next):
-    ua = request.headers.get("user-agent", "")
-    if any(k in ua for k in ["Mozilla", "Chrome", "Safari", "Firefox", "Edge", "Opera"]):
-        return JSONResponse(
-            status_code=403,
-            content={"detail": "Browser access is not allowed."},
-        )
-    return await call_next(request)
 
 
 @app.get("/")

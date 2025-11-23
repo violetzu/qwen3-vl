@@ -3,6 +3,7 @@ uvicorn[standard]
 accelerate
 einops
 Pillow
+python-dotenv
 # 若要 flash-attn，可依需求額外裝
 flash-attn
 torch

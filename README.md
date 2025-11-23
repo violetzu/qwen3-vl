@@ -46,6 +46,10 @@ import json
 import requests
 
 API_URL = "http://localhost:2333/chat-vl"
+API_KEY =  YOURAPIKEY
+headers = {
+    "X-API-Key": API_KEY,
+}
 
 messages = [
     {
@@ -56,6 +60,7 @@ messages = [
 
 resp = requests.post(
     API_URL,
+    headers=headers,
     data={"messages": json.dumps(messages)},
 )
 
@@ -76,9 +81,9 @@ messages = [
 with open("test.jpg", "rb") as f:
     resp = requests.post(
         API_URL,
-        headers=HEADERS,
+        headers=headers,
         data={"messages": json.dumps(messages)},
-        files={"file": ("test.jpg"")}
+        files={"file": ("test.jpg")}
     )
 
 print(resp.json())
@@ -98,7 +103,7 @@ messages = [
 with open("sample.mp4", "rb") as f:
     resp = requests.post(
         API_URL,
-        headers=HEADERS,
+        headers=headers,
         data={"messages": json.dumps(messages)},
         files={"file": ("sample.mp4")}
     )
@@ -111,7 +116,7 @@ print(resp.json())
 ```py
 resp = requests.post(
     API_URL,
-    headers=HEADERS,
+    headers=headers,
     data={
         "messages": json.dumps(messages),
         "max_new_tokens": 100

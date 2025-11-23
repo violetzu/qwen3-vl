@@ -9,6 +9,7 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py /app/app.py
+COPY .env /app/.env
 
 EXPOSE 2333
 
