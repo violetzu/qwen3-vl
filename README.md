@@ -33,6 +33,93 @@ docker exec -it qwen3vl bash
 
 
 # Client post example
+## API：POST /chat-vl
+| 欄位               | 類型               | 說明                                        |
+| ---------------- | ---------------- | ----------------------------------------- |
+| `messages`       | `str`（JSON 字串）   | 與 Qwen3-VL 相同的 chat 格式                    |
+| `file`           | `UploadFile`（可選） | 若 messages 中包含 image/video block，則需上傳對應檔案 |
+| `max_new_tokens` | `int`（可選）        | 模型輸出 token 數量上限（預設 256）                   |
 
 純文字
+```py
+import json
+import requests
+
+API_URL = "http://localhost:2333/chat-vl"
+
+messages = [
+    {
+        "role": "user",
+        "content": "你好，幫我介紹一下你自己。"
+    }
+]
+
+resp = requests.post(
+    API_URL,
+    data={"messages": json.dumps(messages)},
+)
+
+print(resp.json())
 ```
+圖片
+```py
+messages = [
+    {
+        "role": "user",
+        "content": [
+            {"type": "image"},
+            {"type": "text", "text": "這張圖片裡有什麼？"}
+        ]
+    }
+]
+
+with open("test.jpg", "rb") as f:
+    resp = requests.post(
+        API_URL,
+        headers=HEADERS,
+        data={"messages": json.dumps(messages)},
+        files={"file": ("test.jpg"")}
+    )
+
+print(resp.json())
+```
+影片
+```py
+messages = [
+    {
+        "role": "user",
+        "content": [
+            {"type": "video"},
+            {"type": "text", "text": "請描述這段影片的內容。"}
+        ]
+    }
+]
+
+with open("sample.mp4", "rb") as f:
+    resp = requests.post(
+        API_URL,
+        headers=HEADERS,
+        data={"messages": json.dumps(messages)},
+        files={"file": ("sample.mp4")}
+    )
+
+print(resp.json())
+```
+
+
+帶 max_new_tokens
+```py
+resp = requests.post(
+    API_URL,
+    headers=HEADERS,
+    data={
+        "messages": json.dumps(messages),
+        "max_new_tokens": 100
+    }
+)
+```
+
+
+
+
+
