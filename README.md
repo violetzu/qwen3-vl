@@ -22,6 +22,7 @@ docker compose up -d
 ### 3. (Optional) Enter the Container
 If you want to check log:
 ```sh
+docker compose logs -t -f --tail=200
 docker logs -f -t --tail 200 qwen3vl
 docker logs -f -t --tail 200 cftunnel
 ```
