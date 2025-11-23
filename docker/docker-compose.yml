@@ -12,7 +12,7 @@ services:
       - "2333:2333"
     networks:
       - qwen-net
-
+    restart: unless-stopped
   cloudflared:
     image: cloudflare/cloudflared:latest
     container_name: cftunnel
