@@ -7,12 +7,27 @@ services:
     volumes:
       - ./start_vllm.sh:/start_vllm.sh:ro
       - /home/ct/.cache/huggingface/hub:/root/.cache/huggingface/hub \
+      - /home/ct/qwen3-vl/TennisProject:/workspace
     command: ["bash", "/start_vllm.sh"]
     ports:
-      - "2333:2333"
+      - "8005:8005"
     networks:
       - qwen-net
     restart: unless-stopped
+  tennis:
+    image: tennis:latest 
+    container_name: tennis
+    gpus: all
+    ipc: host
+    volumes:
+      - /home/ct/qwen3-vl/TennisProject:/workspace
+    networks:
+      - qwen-net
+    ports:
+      - "8000:8000"
+    tty: true  
+    stdin_open: true 
+
   cloudflared:
     image: cloudflare/cloudflared:latest
     container_name: cftunnel

@@ -8,10 +8,10 @@ WORKDIR /app
 COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app.py /app/app.py
+# COPY app.py /app/app.py
 COPY .env /app/.env
 
 EXPOSE 2333
 
 # 啟動 FastAPI 伺服器
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "2333"]
+# CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "2333"]

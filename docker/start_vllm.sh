@@ -11,4 +11,4 @@ vllm serve Qwen/Qwen3-VL-8B-Instruct \
   --max-model-len 64000 \
   --gpu-memory-utilization 0.9 \
   --host 0.0.0.0 \
-  --port 2333
+  --port 8005
